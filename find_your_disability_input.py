@@ -126,7 +126,7 @@ def main():
         new_user = User(fname, lname, dob, gender, phone, email, address)
         uid = db.add_user(new_user)
         db.commit()
-        input_data(uid)
+        end_var = input_data(uid)
     else:
         uid = User_Locate()
         while end_var == 'Y':
