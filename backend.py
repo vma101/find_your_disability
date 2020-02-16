@@ -29,6 +29,12 @@ class SqliteDB():
     def fetch_userids(self, field, value):
         sql = "select uid from users where {} = ?".format(field)
         return self.execute(sql, [value])
+
+    def fetch_userid(self, field, value):
+        sql = "select uid from users where {} = ?".format(field)
+        id = self.execute(sql, [value])
+        assert(len(id) == 1)
+        return id[0][0]
     
     def add_user(self, user_inst):
         assert(type(user_inst) == User)
@@ -85,6 +91,26 @@ class SqliteDB():
             sql = "insert into treatments values (?, ?, ?, null)"
         self.execute(sql, values)
 
+    def get_user_icf_codes(self, uid):
+        sql = "select icf from dx_icf where uid = ?"
+        codes = self.execute(sql, [uid])
+        return [c[0] for c in codes]
+
+    def get_user_dx_other(self, uid):
+        sql = "select category, subcategory from dx_other where uid = ?"
+        uids = self.execute(sql, [uid])
+        return [u[0] for u in uids]
+
+    def get_user_treatment(self, uid):
+        sql = "select type, name, reaction from treatments where uid = ?"
+        uids = self.execute(sql, [uid])
+        return [u[0] for u in uids]
+
+    def get_icf_code_users(self, icf):
+        sql = "select uid from dx_icf where icf = ?"
+        uids = self.execute(sql, [uid])
+        return [u[0] for u in uids]
+
 class MongoDB():
     def __init__(self, user, pwd):
         self.pw = pwd
@@ -101,3 +127,17 @@ class MongoDB():
 db = SqliteDB("backend.db")
 u1 = User(fname="Andrew", lname="Wells", email="ajwells@uchicago.edu")
 
+
+def find_similar_users(db, uid):
+    icfids = find_similar_icf(db, uid)
+
+
+def find_similar_icf(db, uid):
+    codes = db.get_user_icf_codes(uid)
+    usrs = []
+    for code in codes:
+        usrs += db.get_icf_code_users(code)
+    return usrs
+
+def find_similar_other(db, uid):
+    return []

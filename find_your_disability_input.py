@@ -70,6 +70,12 @@ def Treatment_Call(uid):
         treatment_type = input('What type of intervention did you receive? \n 1 - Medication \n 2 - Procedure \n 3 - Device \n')
         end_var = Treatment_Specific(uid, treatment_type)
 
+treatment_dict = {
+    '1' : 'Medication',
+    '2' : 'Procedure',
+    '3' : 'Device'
+}
+
 def Treatment_Specific(uid, treatment_type):
     end_var_branch = 'Y'
     # DRUG CONDITION
@@ -77,10 +83,10 @@ def Treatment_Specific(uid, treatment_type):
         while end_var_branch == 'Y':
             drug = input('Please input the name of one drug (limit 1024char): ')
             rx_drug_bool = input('Did you have an adverse reaction to the drug? (Y/N): ')
-            rx_drug = 0
+            rx_drug = ''
             if rx_drug_bool == 'Y':
                 rx_drug = input('Please input adverse reactions to the drug (limit 1024char): ') 
-            new_drug = Treatment(treatment_type, drug, rx_drug_bool, rx_drug)
+            new_drug = Treatment(treatment_dict[treatment_type], drug, rx_drug_bool, rx_drug)
             db.add_treatment(uid, new_drug)
             db.commit()
             end_var_branch = input('Would you like to input another drug? (Y/N): ')
@@ -89,10 +95,10 @@ def Treatment_Specific(uid, treatment_type):
         while end_var_branch == 'Y':
             prd = input('Please input the name of a procedure (limit 1024char): ')
             rx_prd_bool = input('Did you have an adverse reaction to the procedure? (Y/N): ')
-            rx_prd = 0
+            rx_prd = ''
             if rx_prd_bool == 'Y':
                 rx_prd = input('Please input adverse reactions to the procedure (limit 1024char): ')
-            new_prd = Treatment(treatment_type, prd, rx_prd_bool, rx_prd)
+            new_prd = Treatment(treatment_dict[treatment_type], prd, rx_prd_bool, rx_prd)
             db.add_treatment(uid, new_prd)
             db.commit()
             end_var_branch = input('Would you like to input another procedure? (Y/N): ')
@@ -101,10 +107,10 @@ def Treatment_Specific(uid, treatment_type):
         while end_var_branch == 'Y':
             device = input('Please input the name of a device you were given (limit 1024char): ')
             rx_device_bool = input('Did you have an adverse reaction to the device? (Y/N): ')
-            rx_device = 0
+            rx_device = ''
             if rx_device_bool == 'Y':
                 rx_device = input('Please input adverse reactions to the device (limit 1024char): ')
-            new_device = Treatment(treatment_type, device, rx_device_bool, rx_device)
+            new_device = Treatment(treatment_dict[treatment_type], device, rx_device_bool, rx_device)
             db.add_treatment(uid, new_device)
             db.commit()
             end_var_branch = input('Would you like to input another device? (Y/N): ')
@@ -138,7 +144,7 @@ def main():
 def User_Locate():
     user_email = input('What is the email you used to register with us? \n')
     # Query the data base to get the user_id
-    user_id = db.fetch_userids('email', user_email)
+    user_id = db.fetch_userid('email', user_email)
     print('Welcome back, {}!'.format(user_id))
     return(user_id)
 
