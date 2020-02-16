@@ -1,5 +1,7 @@
+from backend import SqliteDB
+from data_utils import *
 
-from data_utils import User, Diagnosis, Treatment
+db = SqliteDB("backend.db")
 
 def User_Build():
     fname = input('What is your first name? \n')
@@ -90,6 +92,8 @@ def main():
     if user_arb == 'N':
         [fname, lname, dob, gender, phone, email, address] = User_Build()
         new_user = User(fname, lname, dob, gender, phone, email, address)
+        db.add_user(new_user)
+        db.commit()
     end_var = 'Y'
     while end_var == 'Y':
         section = Section_Redirect()    
