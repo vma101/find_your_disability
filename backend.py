@@ -1,6 +1,7 @@
 from data_utils import *
 import pymongo as pm
 import sqlite3
+import hashlib
 
 class SqliteDB():
     def __init__(self, fname=""):
@@ -108,8 +109,14 @@ class SqliteDB():
 
     def get_icf_code_users(self, icf):
         sql = "select uid from dx_icf where icf = ?"
-        uids = self.execute(sql, [uid])
+        uids = self.execute(sql, [icf])
         return [u[0] for u in uids]
+
+    def get_emails_from_uids(self, uids):
+        prep = ("?,"*len(uids))[:-1]
+        sql = "select email from users where uid in ({})".format(prep)
+        ems = self.execute(sql, uids)
+        return [e[0] for e in ems]
 
 class MongoDB():
     def __init__(self, user, pwd):
@@ -128,9 +135,11 @@ db = SqliteDB("backend.db")
 u1 = User(fname="Andrew", lname="Wells", email="ajwells@uchicago.edu")
 
 
+# returns ([icf users], [other users]) 
 def find_similar_users(db, uid):
     icfids = find_similar_icf(db, uid)
-
+    otherids = find_similar_other(db, uid)
+    return (icfids, otherids)
 
 def find_similar_icf(db, uid):
     codes = db.get_user_icf_codes(uid)
@@ -141,3 +150,7 @@ def find_similar_icf(db, uid):
 
 def find_similar_other(db, uid):
     return []
+
+def get_anon_email(db, uids):
+    emails = db.get_emails_from_uids(uids)
+    return [hashlib.sha256(email).hexdigest() for email in emails]
