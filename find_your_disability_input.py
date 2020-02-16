@@ -1,5 +1,4 @@
-import numpy as np 
-import pymongo as pm
+
 from data_utils import User, Diagnosis, Treatment
 
 def User_Build():
