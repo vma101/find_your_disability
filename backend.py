@@ -99,13 +99,13 @@ class SqliteDB():
 
     def get_user_dx_other(self, uid):
         sql = "select category, subcategory from dx_other where uid = ?"
-        uids = self.execute(sql, [uid])
-        return [u[0] for u in uids]
+        dx_other = self.execute(sql, [uid])
+        return dx_other
 
     def get_user_treatment(self, uid):
         sql = "select type, name, reaction from treatments where uid = ?"
-        uids = self.execute(sql, [uid])
-        return [u[0] for u in uids]
+        treats = self.execute(sql, [uid])
+        return treats
 
     def get_icf_code_users(self, icf):
         sql = "select uid from dx_icf where icf = ?"
@@ -167,3 +167,19 @@ def get_anon_email_from_user_sim(db, uid):
     for anon in anonmail:
         print("{}@find_your_disability.net".format(anon), end="\n")
     print("")
+
+def show_records(db, uid):
+    dxother = db.get_user_dx_other(uid)
+    dxicf = db.get_user_icf_codes(uid)
+    treats = db.get_user_treatment(uid)
+    print("ICFs:")
+    for icf in dxicf:
+        print("\t{}".format(icf))
+    print("Other disabilities:")
+    for icf in dxother:
+        print("\t{}: {}".format(icf[0], icf[1]))
+    print("Treatments:")
+    for icf in treats:
+        print("\t{}: {}".format(icf[0], icf[1]))
+        if(icf[2] is not None):
+            print("\t\tReaction: {}".format(icf[2]))
