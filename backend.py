@@ -153,17 +153,17 @@ def find_similar_other(db, uid):
 
 def get_anon_email(db, uids):
     emails = db.get_emails_from_uids(uids)
-    return [hashlib.sha256(email).hexdigest() for email in emails]
+    return [hashlib.sha256(email.encode("utf-8")).hexdigest() for email in emails]
 
 def get_anon_email_from_user_sim(db, uid):
     icfids, otherids = find_similar_users(db, uid)
     anonmail = get_anon_email(db, icfids)
     print("The following people have the same ICF codes as you:")
     for anon in anonmail:
-        print("{}@find_your_disability.net".format(anon), end=" ")
+        print("{}@find_your_disability.net".format(anon), end="\n")
     print("")
     anonmail = get_anon_email(db, otherids)
     print("The following people have the similar general disabilities as you:")
     for anon in anonmail:
-        print("{}@find_your_disability.net".format(anon), end=" ")
+        print("{}@find_your_disability.net".format(anon), end="\n")
     print("")

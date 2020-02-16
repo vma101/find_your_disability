@@ -1,4 +1,4 @@
-from backend import SqliteDB
+from backend import *
 from data_utils import *
 
 db = SqliteDB("backend.db")
@@ -119,26 +119,36 @@ def Treatment_Specific(uid, treatment_type):
 
 ###################################### WRAPPER FUNCTIONS ######################################
 def main():
+    end_var = 'Y'
     user_arb = input('Welcome to Find Your Disability. Do you have an account with us? (Y/N): ')
     if user_arb == 'N':
         [fname, lname, dob, gender, phone, email, address] = User_Build()
         new_user = User(fname, lname, dob, gender, phone, email, address)
         uid = db.add_user(new_user)
         db.commit()
+        input_data(uid)
     else:
         uid = User_Locate()
-    end_var = 'Y'
-    while end_var == 'Y':
+        action_arb = input('Would you like to input data or find your match today? \n 1 - Input \n 2 - Find My Disability \n')
+        if action_arb == '1':
+            input_data(uid)
+        else:
+            get_anon_email_from_user_sim(db, uid)
+    if end_var == 'N':
+        print('Thank you. Have a great day!') 
+
+def input_data(uid):
+    end_var_branch = 'Y'
+    while end_var_branch == 'Y':
         section = Section_Redirect()    
         # Diagnostic Inputs
         if section == '1':
             Diagnostic_Call(uid)
         if section == '2':
             Treatment_Call(uid)
-        end_var = input('Would you like to input any other information today? Y/N: ')
-    if end_var == 'N':
-        print('Thank you. Have a great day!') 
-
+        end_var_branch = input('Would you like to input any other information today? Y/N: ')
+    return end_var_branch
+    
 # Old to System / Adding to Records
 
 def User_Locate():
