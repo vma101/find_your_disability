@@ -1,4 +1,4 @@
-from data_utils import User
+from data_utils import *
 import pymongo as pm
 import sqlite3
 
@@ -62,9 +62,28 @@ class SqliteDB():
         fields = fields[:-2]
         sql = "insert into users ({}) values ({})".format(fields, ("?,"*len(vals))[:-1])
         self.execute(sql, vals)
-        return 0
+        id = self.fetch_userids("email", user_inst.email)[0][0]
+        return id
 
-
+    def add_dx(self, uid, dx):
+        if(type(dx) == Dx_ICF):
+            sql = "insert into dx_icf values (?, ?)"
+            self.execute(sql, [uid, dx.icf])
+        elif(type(dx) == Dx_Other):
+            sql = "insert into dx_other values (?, ?, ?)"
+            self.execute(sql, [uid, dx.cat, dx.sub])
+        else:
+            print("Dx must be an instance of Dx_ICF or Dx_Other")
+    
+    def add_treatment(self, uid, treat):
+        assert(type(treat) == Treatment)
+        values = [uid, treat.type, treat.name]
+        if(treat.rx != ''):
+            sql = "insert into treatments values (?, ?, ?, ?)"
+            values.append(treat.rx)
+        else:
+            sql = "insert into treatments values (?, ?, ?, null)"
+        self.execute(sql, values)
 
 class MongoDB():
     def __init__(self, user, pwd):
