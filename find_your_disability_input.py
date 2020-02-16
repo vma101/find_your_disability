@@ -129,11 +129,13 @@ def main():
         input_data(uid)
     else:
         uid = User_Locate()
-        action_arb = input('Would you like to input data or find your match today? \n 1 - Input \n 2 - Find My Disability \n')
-        if action_arb == '1':
-            input_data(uid)
-        else:
-            get_anon_email_from_user_sim(db, uid)
+        while end_var == 'Y':
+            action_arb = input('Would you like to input data or find your match today? \n 1 - Input \n 2 - Find My Disability \n')
+            if action_arb == '1':
+                input_data(uid)
+            else:
+                get_anon_email_from_user_sim(db, uid)
+            end_var = input('Would you like to do anything else today? (Y/N): ')
     if end_var == 'N':
         print('Thank you. Have a great day!') 
 
